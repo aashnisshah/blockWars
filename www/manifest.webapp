@@ -1,7 +1,7 @@
 {
   "version": "0.1",
-  "name": "My App",
-  "description": "Your new awesome Open Web App",
+  "name": "Block Wars",
+  "description": "A Block Wars Game",
   "launch_path": "/",
   "icons": {
     "16": "/img/icons/mortar-16.png",
@@ -9,8 +9,8 @@
     "128": "/img/icons/mortar-128.png"
   },
   "developer": {
-    "name": "Your Name",
-    "url": "http://yourawesomeapp.com"
+    "name": "Aashni Shah",
+    "url": "http://aashni.me"
   },
   "installs_allowed_from": ["*"],
   "appcache_path": "/cache.manifest",

@@ -44,14 +44,32 @@ define(function(require) {
     var player = {
         x: 0,
         y: 0,
-        sizeX: 50,
-        sizeY: 50
+        sizeX: 25,
+        sizeY: 25,
+        grow: 0
     };
-
+    
+    // safezone
+    var safeZone = {
+    	x: 0,
+    	y: canvas.height - 50,
+    	sizeX: 100,
+    	sizeY: 25,
+    	move: 0
+    };
+    
     // Reset game to original state
     function reset() {
         player.x = 0;
         player.y = 0;
+        player.sizeX = 25;
+        player.sizeY = 25;
+        player.grow = 0;
+        safeZone.x = 0;
+        safeZone.y = canvas.height - 25;
+        safeZone.sizeX = 100;
+        safeZone.sizeY = 25;
+        safeZone.move = 0;
     };
 
     // Pause and unpause
@@ -87,6 +105,40 @@ define(function(require) {
         if(input.isDown('RIGHT')) {
             player.x += playerSpeed * dt;
         }
+        
+        player.grow += 1;
+        if(player.grow >= 200){
+        	doublePlayerSize();
+        	player.grow = 0;
+        }
+        
+        safeZone.move += 1;
+        if(safeZone.move >= 50){
+        	safeZone.x += 5;
+        	safeZone.move = 0;
+        }
+        
+        if(player.sizeX > safeZone.sizeX){
+        	// player has lost as it's too big
+        	player.grow = 0;
+        }
+        
+        if(player.sizeX <= safeZone.sizeX){
+        	if(player.x >= safeZone.x && player.x <= (safeZone.x + safeZone.sizeX) && player.y >= safeZone.y){
+        		//player wins as it's inside the canvas
+        		reset();
+        		
+        		var next = window.confirm("Player is safe! Choose yes to go to the next round, click cancel to restart this round.");
+        		
+        		if(next == true){
+        			// go to the next round
+        			alert("We shall move to the next round!");
+        		} else {
+        			// restart the current round
+        			alert("We shall restart the current round");
+        		}
+        	}
+        }
     };
 
     // Draw everything
@@ -94,10 +146,44 @@ define(function(require) {
         ctx.fillStyle = 'black';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        ctx.fillStyle = 'green';
+        ctx.fillStyle = 'purple';
         ctx.fillRect(player.x, player.y, player.sizeX, player.sizeY);
+        
+        ctx.fillStyle = 'blue';
+        ctx.fillRect(safeZone.x, safeZone.y, safeZone.sizeX, safeZone.sizeY);
+        
     };
-
+    
+    function doublePlayerSize(){
+    	player.sizeX = player.sizeX * 2;
+ 	   	player.sizeY = player.sizeY * 2;
+ 	   	player.grow = 0;
+    };
+    
+    function winnerMessage(){
+    	
+    	// canvas writing
+    	var CanvasText = new CanvasText;
+	
+  
+		CanvasText.config({
+			canvasId: "canvas",
+			fontFamily: "Verdana",
+			fontSize: "14px",
+			fontWeight: "normal",
+			fontColor: "#fff",
+			lineHeight: "12"
+		});
+		
+		var text = 'The player wins!';
+		CanvasText.drawText({
+			text:text,
+			x: 20,
+			y: 30
+		});
+		
+    }
+    
     // The main game loop
     function main() {
         if(!running) {

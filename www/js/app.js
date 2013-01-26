@@ -39,6 +39,8 @@ define(function(require) {
     canvas.width = 512;
     canvas.height = 480;
     document.body.appendChild(canvas);
+    
+    var newRound = 0;
 
     // The player's state
     var player = {
@@ -58,19 +60,45 @@ define(function(require) {
     	move: 0
     };
     
+    var current = {
+    	playerx: 0,
+        playery: 0,
+        playersizeX: 25,
+        playersizeY: 25,
+        playergrow: 0,
+        safeZonex: 0,
+    	safeZoney: canvas.height - 50,
+    	safeZonesizeX: 100,
+    	safeZonesizeY: 25,
+    	safeZonemove: 0
+    };
+    
     // Reset game to original state
     function reset() {
-        player.x = 0;
-        player.y = 0;
+        player.x = current.playerx;
+        player.y = current.playery;
+        player.sizeX = current.playersizeX;
+        player.sizeY = current.playersizeY;
+        player.grow = current.playergrow;
+        safeZone.x = current.safeZonex;
+        safeZone.y = current.safeZoney;
+        safeZone.sizeX = current.safeZonesizeX;
+        safeZone.sizeY = current.safeZonesizeY;
+        safeZone.move = current.safeZonemove;
+    };
+    
+    function level2(){
+    	player.x = 200;
+        player.y = canvas.height-25;
         player.sizeX = 25;
         player.sizeY = 25;
         player.grow = 0;
         safeZone.x = 0;
-        safeZone.y = canvas.height - 25;
+        safeZone.y = 0;
         safeZone.sizeX = 100;
         safeZone.sizeY = 25;
         safeZone.move = 0;
-    };
+    }
 
     // Pause and unpause
     function pause() {
@@ -86,6 +114,21 @@ define(function(require) {
     // Update game objects
     function update(dt) {
         // Speed in pixels per second
+        
+        if(newRound == 0){
+        	current.playerx = player.x;
+			current.playery = player.y;
+			current.playersizeX = player.sizeX;
+			current.playersizeY = player.sizeY;
+			current.playergrow = player.grow;
+			current.safeZonex = safeZone.x;
+			current.safeZoney = safeZone.y;
+			current.safeZonesizeX = safeZone.sizeX;
+			current.safeZonesizeY = safeZone.sizeY;
+			current.safeZonemove = safeZone.move;
+        	newRound = 1;
+        }
+        
         var playerSpeed = 100;
 
         if(input.isDown('DOWN')) {
@@ -120,11 +163,17 @@ define(function(require) {
         
         if(player.sizeX > safeZone.sizeX){
         	// player has lost as it's too big
-        	player.grow = 0;
+        	var retry = window.confirm("You didn't get to the safe zone in time. Try again?");
+        	if(retry == true){
+        		newRound = 0;
+        		reset();
+        	} else {
+        		// end the game?
+        	}
         }
         
         if(player.sizeX <= safeZone.sizeX){
-        	if(player.x >= safeZone.x && player.x <= (safeZone.x + safeZone.sizeX) && player.y >= safeZone.y){
+        	if( (player.x >= safeZone.x) && (player.x <= (safeZone.x + safeZone.sizeX)) && (player.y >= safeZone.y) && (player.y <= safeZone.y + safeZone.sizeY) ){
         		//player wins as it's inside the canvas
         		reset();
         		
@@ -133,6 +182,7 @@ define(function(require) {
         		if(next == true){
         			// go to the next round
         			alert("We shall move to the next round!");
+        			level2();
         		} else {
         			// restart the current round
         			alert("We shall restart the current round");

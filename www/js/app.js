@@ -183,6 +183,7 @@ define(function(require) {
         			// go to the next round
         			alert("We shall move to the next round!");
         			level2();
+        			newRound = 0;
         		} else {
         			// restart the current round
         			alert("We shall restart the current round");

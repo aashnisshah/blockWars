@@ -73,6 +73,13 @@ define(function(require) {
     	safeZonemove: 0
     };
     
+    var solidBlocks = {
+    	x: 0,
+    	y: 0,
+    	sizeX: 0,
+    	sizeY: 0
+    };
+    
     // Reset game to original state
     function reset() {
         player.x = current.playerx;
@@ -87,6 +94,8 @@ define(function(require) {
         safeZone.move = current.safeZonemove;
     };
     
+    var level = 0;
+    
     function level2(){
     	player.x = 200;
         player.y = canvas.height-25;
@@ -98,6 +107,20 @@ define(function(require) {
         safeZone.sizeX = 100;
         safeZone.sizeY = 25;
         safeZone.move = 0;
+    }
+    
+    function level3(){
+    	player.x = 200;
+        player.y = canvas.height-25;
+        player.sizeX = 25;
+        player.sizeY = 25;
+        player.grow = 0;
+        safeZone.x = 0;
+        safeZone.y = 0;
+        safeZone.sizeX = 100;
+        safeZone.sizeY = 25;
+        safeZone.move = 0;
+        
     }
 
     // Pause and unpause
@@ -182,8 +205,10 @@ define(function(require) {
         		if(next == true){
         			// go to the next round
         			alert("We shall move to the next round!");
-        			level2();
+        			level3();
         			newRound = 0;
+        			level = 3;
+        			window['level3']();
         		} else {
         			// restart the current round
         			alert("We shall restart the current round");
@@ -202,6 +227,11 @@ define(function(require) {
         
         ctx.fillStyle = 'blue';
         ctx.fillRect(safeZone.x, safeZone.y, safeZone.sizeX, safeZone.sizeY);
+        
+        if(level == 3){
+			ctx.fillStyle = 'yellow';
+			ctx.fillRect(60, 60, 50, 50);
+		}
         
     };
     
